@@ -1,0 +1,26 @@
+{
+  "name": "weighted",
+  "version": "0.1.0",
+  "description": "A dead-simple module for picking a random item with weights.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/Schoonology/weighted.git"
+  },
+  "keywords": [
+    "simple",
+    "random",
+    "weighted",
+    "weights",
+    "ai",
+    "bot"
+  ],
+  "author": "Michael Schoonmaker <michael.r.schoonmaker@gmail.com>",
+  "license": "MIT"
+}
