@@ -55,6 +55,14 @@ By default, `weighted.select` uses Math.random() for selection. This can be over
 
     console.log('Decision:', weighted.select(options, weights, rand))
 
+## A Note on Weights
+
+Version 0.1 required that all weights add up to exactly 1. As of version 0.2 this is no longer required, simply recommended.
+
+## A Note on Performance
+
+Weighted is optimized for selection, especially repeated selection over the same Arrays of actions and weights. See the output and source of `npm run-script bench` for details.
+
 ## Thanks
 
  * The AI folks at 38 Studios for teaching me just how "intelligent" random activity can seem.
