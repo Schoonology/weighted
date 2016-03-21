@@ -101,6 +101,14 @@ weight for each item will work well enough.
 Microbenchmarks are available via `npm run bench` if you want examples of the
 different patterns and their performance implications.
 
+## Selecting multiple items simultaneously
+
+For now, selecting multiple items in the same call is unsupported. If you want
+multiple selections (i.e. duplicates are okay, you just want multiple), then
+calling `weighted.select` multiple times is sufficient. If you're hoping to
+get multiple _unique_ selections in the same call, you're best off writing a
+wrapper to suit your specific use case. [Issue #2][issue-2] has one approach.
+
 ## Thanks
 
 This module was originally built for [`bot-factory`][bot-factory], and I'd be
@@ -109,4 +117,5 @@ team at 38 Studios for teaching me just how "intelligent" random activity can
 seem.
 
 [mersenne]: https://www.npmjs.com/package/mersenne
+[issue-2]: https://github.com/Schoonology/weighted/issues/2
 [bot-factory]: https://www.npmjs.com/package/bot-factory
