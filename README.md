@@ -1,80 +1,112 @@
 # weighted
 
-A dead-simple module for picking a random item from a set, with weights. Extremely useful for bot scripting.
+A dead-simple module for picking an item from a set of items while picking some
+more frequently than others. Each item is given a numerical "weight": each
+item's likelihood to be selected is directly proportional to its share of the
+total weight.
+
+For example, if I have two items, "apple" and "orange", with "apple" having a
+weight of 1 and "orange" having a weight of 2, then "orange" is _twice_ as
+likely to be chosen as "apple" (2/3 vs 1/3). If we add a third option, "banana",
+with a weight of 2, then "banana" and "orange" are each as likely to be picked
+as the other, and twice as likely to be picked as "apple" (2/5 vs 1/5).
 
 ## Installation
 
-It's on NPM:
-
-    npm install weighted
+```
+npm install weighted
+```
 
 ## Usage
 
-### Selection Function
-
 Weighted returns a Function additionally available as `weighted.select`:
 
-    weighted.select(set, weights, [rand])
-    weighted.select(obj, [rand])
+    weighted(set, weights, [options])
+    weighted(obj, [options])
+    weighted.select(set, weights, [options])
+    weighted.select(obj, [options])
 
-Selections can be made based on either a pair of Arrays or a single Object, like so:
+Selections can be made based on either a pair of Arrays (one with the items,
+and one with their weights) or a single Object (with the items as keys and
+their weights as values). In each of the following examples, `'Wake Up'` has a
+25% chance of being selected, while `'Snooze Alarm'` has a 75% chance. If we
+added more items, the chances would change accordingly as discussed above.
 
-#### Array Version
+### Array version
 
     var weighted = require('weighted')
 
-    var options = ['Wake Up', 'Snooze Alarm']
+    var items = ['Wake Up', 'Snooze Alarm']
       , weights = [0.25, 0.75]
 
-    console.log('Decision:', weighted.select(options, weights))
+    console.log('Decision:', weighted.select(items, weights))
 
-#### Object Version
+### Object version
 
     var weighted = require('weighted')
 
-    var options = {
+    var items = {
     	  'Wake Up': 0.25,
     	  'Snooze Alarm': 0.75
     	}
 
-    console.log('Decision:', weighted.select(options))
+    console.log('Decision:', weighted.select(items))
 
-### Overriding Rand
+## Available options
 
-By default, `weighted.select` uses Math.random() for selection. This can be overridden by providing a Function as the third, `rand`, parameter:
+The third argument, `options`, shapes the way Weighted performs the selection:
+
+| Name | Description |
+|------|-------------|
+| rand | A function returning a number in `[0, )` to use for selection. Assumed to be (though by no means required) uniformly distributed. See "Overriding rand", below. |
+| normal | If truthy all weights are assumed to add up to 1. See "Pre-normalizing for performance", below. |
+
+### Overriding rand
+
+By default Weighted uses `Math.random()` for selection. This can be overridden
+by providing a Function as the `rand` option. Like `Math.random()`, it should
+require no arguments and return a number between 0 and 1. For example, if you
+wanted to override `rand` with the [`mersenne`][mersenne] library:
 
     var weighted = require('weighted')
       , mersenne = require('mersenne')
 
-    var options = ['Wake Up', 'Snooze Alarm']
+    var items = ['Wake Up', 'Snooze Alarm']
       , weights = [0.25, 0.75]
 
     function rand() {
       return mersenne.rand() / 32768
     }
 
-    console.log('Decision:', weighted.select(options, weights, rand))
+    console.log('Decision:', weighted.select(items, weights, rand))
 
-## A Note on Weights
+## Pre-normalizing
 
-Version 0.1 required that all weights add up to exactly 1. As of version 0.2 this is no longer required, simply recommended.
+This module is optimized for multiple selections from the same set of items,
+and will try to front-load the costs of normalizing any weights you assign them.
+but if the set of items or their weights need to change constantly, you can help
+Weighted out by normalizing or tallying those weights yourself.
 
-## A Note on Performance
+If all the weights add up to 1 (as they have in our examples), you can pass a
+truthy value to the `normal` option, and Weighted will assume as much. If all
+the weights add up to any other value, you can provide a number as the `total`
+option, and Weighted will use that total instead.
 
-Weighted is optimized for selection, especially repeated selection over the same Arrays of actions and weights. See the output and source of `npm run-script bench` for details.
+From a human perspective, it can be convenient to normalize your weights, as
+any weight multiplied by 100 will give you the exact percentage likelihood that
+item will be selected. On the other hand, if there is some "voting" mechanism
+influencing the weights, for instance, simply using the number of votes as the
+weight for each item will work well enough.
+
+Microbenchmarks are available via `npm run bench` if you want examples of the
+different patterns and their performance implications.
 
 ## Thanks
 
- * The AI folks at 38 Studios for teaching me just how "intelligent" random activity can seem.
+This module was originally built for [`bot-factory`][bot-factory], and I'd be
+remiss if I didn't thank Red Robot Labs for sponsoring that work, and the AI
+team at 38 Studios for teaching me just how "intelligent" random activity can
+seem.
 
-## License
-
-    Copyright (C) 2012 Michael Schoonmaker (michael.r.schoonmaker@gmail.com)
-
-    This project is free software released under the MIT/X11 license:
-
-    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+[mersenne]: https://www.npmjs.com/package/mersenne
+[bot-factory]: https://www.npmjs.com/package/bot-factory

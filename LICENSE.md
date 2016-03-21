@@ -1,4 +1,4 @@
-Copyright (C) 2012 Michael Schoonmaker (michael.r.schoonmaker@gmail.com)
+Copyright (C) 2012-2015 Michael Schoonmaker (michael.r.schoonmaker@gmail.com)
 
 This project is free software released under the MIT/X11 license:
 
