@@ -1,5 +1,6 @@
 var weighted = require('../')
 var expect = require('chai').expect
+var td = require('testdouble')
 var OPTIONS_ARR_5 = [1, 2, 3, 4, 5]
 var WEIGHTS_ARR_5 = [0.2, 0.4, 0.1, 0.2, 0.1]
 var WEIGHTS_ARR_4 = [0.2, 0.4, 0.2, 0.2]
@@ -43,6 +44,15 @@ describe('Weighted', function () {
       expect(function () {
         weighted.select(OPTIONS_ARR_5, 42)
       }).to.throw(TypeError)
+    })
+
+    it('should call a provided rand function', function () {
+      var rand = td.function()
+      td.when(rand()).thenReturn(0)
+
+      weighted.select(OPTIONS_ARR_5, WEIGHTS_ARR_5, { rand: rand })
+
+      td.verify(rand())
     })
   })
 
