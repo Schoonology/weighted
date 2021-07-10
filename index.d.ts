@@ -4,6 +4,9 @@ type WeightedOptions = {
   total?: number
 };
 //
+type SimpleSelectArrFunction =
+  <S>(
+    set: Readonly<Array<S>>) => S;
 type SelectArrFunction =
   <S>(
     set: Readonly<Array<S>>,
@@ -13,7 +16,7 @@ type SelectObjFunction =
   <O, K extends keyof O>(
     obj: Readonly<O>,
     options?: WeightedOptions) => K;
-type SelectFunction = SelectArrFunction & SelectObjFunction;
+type SelectFunction = SimpleSelectArrFunction & SelectArrFunction & SelectObjFunction;
 //
 type WeightedFunction = SelectFunction & {
   select: SelectFunction,
